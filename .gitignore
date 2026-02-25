@@ -1,0 +1,48 @@
+# Directorios de compilación
+build/
+cmake-build-*/
+
+# Archivos generados por CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Ejecutables
+*.exe
+*.out
+fire_engine
+
+# Archivos de objeto y librerías
+*.o
+*.so
+*.a
+*.dylib
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Archivos de estado JSON generados
+state_step_*.json
+step*.json
+estado*.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Archivos temporales
+*.tmp
+*.log
