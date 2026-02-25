@@ -204,22 +204,22 @@ def main():
                     func()
                     print("\n" + "-"*60)
                 else:
-                    print("⚠️  Opción inválida. Intenta de nuevo.")
+                    print("Opción inválida. Intenta de nuevo.")
             except ValueError:
-                print("⚠️  Por favor ingresa un número válido.")
+                print("Por favor ingresa un número válido.")
             except KeyboardInterrupt:
-                print("\n\n⚠️  Interrumpido por el usuario.")
+                print("\n\nInterrumpido por el usuario.")
                 break
     
     except FileNotFoundError as e:
-        print(f"\n❌ Error: {e}", file=sys.stderr)
-        print("\n💡 Solución: Compila el motor C++ primero:", file=sys.stderr)
+        print(f"\nError: {e}", file=sys.stderr)
+        print("\nSolución: Compila el motor C++ primero:", file=sys.stderr)
         print("     mkdir build && cd build", file=sys.stderr)
         print("     cmake ..", file=sys.stderr)
         print("     make", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"\n❌ Error inesperado: {e}", file=sys.stderr)
+        print(f"\nError inesperado: {e}", file=sys.stderr)
         import traceback
         traceback.print_exc()
         sys.exit(1)
