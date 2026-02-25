@@ -59,7 +59,7 @@ Esto generará el ejecutable `fire_engine` en el directorio `build/`.
 
 Deberías ver la salida JSON del estado inicial.
 
-## 📖 Uso
+## Uso
 
 ### Motor C++ (Línea de Comandos)
 
