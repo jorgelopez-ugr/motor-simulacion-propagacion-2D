@@ -70,7 +70,7 @@ std::vector<std::pair<int, int>> FireEngine::getAdjacentCells(int x, int y) {
     return adjacent;
 }
 
-std::vector<std::pair<int, int>> FireEngine::getIgnitionCells(int x, int y) {
+std::vector<std::pair<int, int>> FireEngine::getIgnitionCellsProbabilities(int x, int y) {
     // Implementación de propagación probabilística básica.
     // Aquí puedes insertar tus ecuaciones diferenciales.
     // Por ahora, simulamos que el fuego se expande con probabilidad del 30% a cada vecino.

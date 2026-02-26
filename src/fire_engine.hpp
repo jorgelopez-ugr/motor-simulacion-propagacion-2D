@@ -20,7 +20,9 @@ private:
 
     // Obtiene las celdas que se encenderán a partir de una celda en fuego
     // Implementa la logica de propagacion. getAdjacentCells es un caso de ejemplo
-    std::vector<std::pair<int, int>> getIgnitionCells(int x, int y);
+    std::vector<std::pair<int, int>> getIgnitionCellsProbabilities(int x, int y);
+
+    std::vector<std::pair<int, int>> getIgnitionCellsProbabilities(int x, int y);
 
 public:
     FireEngine(int width, int height);
