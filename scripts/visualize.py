@@ -21,6 +21,10 @@ class TerminalVisualizer:
     BLUE = '\033[94m'
     RESET = '\033[0m'
     BOLD = '\033[1m'
+
+    fire_cells: int = 0  # Contador de celdas en fuego (para estadísticas)
+    green_cells: int = 0  # Contador de celdas verdes (sin fuego)
+    total_cells: int = 0  # Contador total de celdas (para estadísticas)
     
     def __init__(self, use_colors: bool = True):
         """
@@ -57,12 +61,12 @@ class TerminalVisualizer:
         self._render_grid(grid)
         
         # Estadísticas
-        total_cells = width * height
-        fire_cells = sum(row.count(1) for row in grid)
-        green_cells = total_cells - fire_cells
+        self.total_cells = width * height
+        self.fire_cells = sum(row.count(1) for row in grid)
+        self.green_cells = self.total_cells - self.fire_cells
         
-        print(f"\n  {self._color('■', self.GREEN)} Verdes (sin fuego): {green_cells}")
-        print(f"  {self._color('■', self.RED)} Rojas (en fuego): {fire_cells}")
+        print(f"\n  {self._color('■', self.GREEN)} Verdes (sin fuego): {self.green_cells}")
+        print(f"  {self._color('■', self.RED)} Rojas (en fuego): {self.fire_cells}")
         print(f"{self._color('=' * 50, self.BLUE)}\n")
     
     def _render_grid(self, grid: list) -> None:

@@ -76,7 +76,7 @@ def run_demo(width: int = 2, height: int = 2, delay: float = 1.5, save_states: b
                 print("  La simulación ha terminado.")
                 break
             
-            print(f"\nPropagando fuego (paso {i + 2})...")
+            # print(f"\nPropagando fuego (paso {i + 2})...")
             time.sleep(delay / 2)
             
             state = api.process_state(state)
@@ -86,8 +86,13 @@ def run_demo(width: int = 2, height: int = 2, delay: float = 1.5, save_states: b
                 api.save_state(state, f"state_step_{state['step']}.json")
             
             # Si no se incendiaron nuevas celdas, la simulación ha terminado
-            if state.get('cells_ignited', 0) == 0:
-                print("\n✓ No hay más celdas para propagar.")
+            # if state.get('cells_ignited', 0) == 0:
+            #     print("\n✓ No hay más celdas para propagar.")
+            #     print("  La simulación ha terminado.")
+            #     break
+
+            if visualizer.fire_cells == total_cells:
+                print("\n¡TODAS LAS CELDAS ESTÁN EN FUEGO!")
                 print("  La simulación ha terminado.")
                 break
             

@@ -3,7 +3,10 @@
 #include <ctime>
 #include <algorithm>
 
-FireEngine::FireEngine(int width, int height) : width_(width), height_(height) {}
+FireEngine::FireEngine(int width, int height) : width_(width), height_(height) {
+    // Seeding RNG for probabilistic behavior in each execution
+    std::srand(std::time(nullptr) + std::rand()); 
+}
 
 json FireEngine::generateInitialState(int step) {
     
@@ -40,7 +43,6 @@ json FireEngine::generateInitialState(int step) {
     
     // Si es el paso 1, elegir una celda aleatoria para incendiar
     if (step == 1) {
-        std::srand(std::time(nullptr));
         int randomX = std::rand() % width_;
         int randomY = std::rand() % height_;
         grid[randomY][randomX] = 1; // 1 = rojo (en fuego)
@@ -68,6 +70,38 @@ std::vector<std::pair<int, int>> FireEngine::getAdjacentCells(int x, int y) {
     return adjacent;
 }
 
+std::vector<std::pair<int, int>> FireEngine::getIgnitionCellsProbabilities(int x, int y) {
+    // Implementación de propagación probabilística básica.
+    // Aquí puedes insertar tus ecuaciones diferenciales.
+    // Por ahora, simulamos que el fuego se expande con probabilidad del 30% a cada vecino.
+    
+    std::vector<std::pair<int, int>> ignitionCandidates;
+    
+    // Lista de vecindad de Von Neumann (Arriba, Abajo, Izquierda, Derecha)
+    // Podrías cambiar esto a Moore (incluyendo diagonales) si quisieras
+    std::vector<std::pair<int, int>> neighbors;
+    if (y > 0) neighbors.push_back({x, y - 1});
+    if (y < height_ - 1) neighbors.push_back({x, y + 1});
+    if (x > 0) neighbors.push_back({x - 1, y});
+    if (x < width_ - 1) neighbors.push_back({x + 1, y});
+
+    // Factor de probabilidad de ignición (0.0 a 1.0)
+    // Esto simula "resistencia" del material o condiciones del viento neutral
+    double ignitionProbability = 0.5; 
+
+    // Usamos rand() para la prueba. En un sistema real usaríamos distribuciones más complejas.
+    // Nota: srand se llama en generateInitialState, pero para asegurar aleatoriedad en cada paso
+    // idealmente se debería manejar el estado del RNG. Por simplicidad aquí:
+    for (const auto& neighbor : neighbors) {
+        double chance = static_cast<double>(std::rand()) / RAND_MAX;
+        if (chance < ignitionProbability) {
+            ignitionCandidates.push_back(neighbor);
+        }
+    }
+    
+    return ignitionCandidates;
+}
+
 std::vector<std::pair<int, int>> FireEngine::findCellsToPropagate(const std::vector<std::vector<int>>& grid) {
     std::vector<std::pair<int, int>> cellsToIgnite;
     
@@ -75,11 +109,13 @@ std::vector<std::pair<int, int>> FireEngine::findCellsToPropagate(const std::vec
     for (int y = 0; y < height_; ++y) {
         for (int x = 0; x < width_; ++x) {
             if (grid[y][x] == 1) { // Si está en fuego
-                // Propagar a adyacentes que no estén en fuego
-                auto adjacent = getAdjacentCells(x, y);
-                for (const auto& [adjX, adjY] : adjacent) {
-                    if (grid[adjY][adjX] == 0) { // Si no está en fuego
-                        cellsToIgnite.push_back({adjX, adjY});
+                // Usar la nueva lógica de propagación (probabilística o basada en ecuaciones)
+                auto potentialIgnitions = getIgnitionCells(x, y);
+                
+                for (const auto& [ignX, ignY] : potentialIgnitions) {
+                    // Verificar que la celda destino no esté ya quemada
+                    if (grid[ignY][ignX] == 0) { 
+                        cellsToIgnite.push_back({ignX, ignY});
                     }
                 }
             }
