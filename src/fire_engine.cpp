@@ -72,13 +72,12 @@ json FireEngine::generateInitialState(int step) {
     
     // Inicializar campos de fluidos
     if (step == 0) {
-        // Estado inicial: todo es bosque sin fuego
+        // Estado inicial: encender la celda (0,0) desde el principio
+        igniteCell(0, 0);
         state["grid"] = getDiscreteGrid();
     } else if (step == 1) {
-        // Encender una celda aleatoria
-        int randomX = std::rand() % width_;
-        int randomY = std::rand() % height_;
-        igniteCell(randomX, randomY);
+        // Asegurar que (0,0) está encendida (por compatibilidad)
+        igniteCell(0, 0);
         state["grid"] = getDiscreteGrid();
     }
     

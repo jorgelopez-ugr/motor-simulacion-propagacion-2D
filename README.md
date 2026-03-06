@@ -1,13 +1,14 @@
 # Motor de Simulación de Propagación de Fuego 2D
 
-Motor de simulación en C++ para cálculos de propagación de fuego en 2D, con API Python y visualización en terminal. Como paso previo a la creación del motor volumétrico, este motor más simple permite definir y validar las condiciones del intercambio de datos en JSON con un renderizador 2D en Godot.
+Motor de simulación en C++ para cálculos de propagación de fuego en 2D, con API Python y visualización en terminal y Godot. Como paso previo a la creación del motor volumétrico, este motor más simple permite definir y validar las condiciones del intercambio de datos en JSON con un renderizador 2D en Godot.
 
 ## 🔥 Características
 
-- **Motor C++**: Procesa estados en JSON y aplica lógica de propagación de fuego
+- **Motor C++**: Simulación física basada en CFD (Computational Fluid Dynamics) con modelo NVIDIA
 - **API Python**: Interfaz sencilla para comunicarse con el motor C++
 - **Visualizador de Terminal**: Renderiza el estado de la simulación en la consola
-- **Formato JSON**: Comunicación estandarizada entre componentes
+- **Integración con Godot**: Scripts GDScript para renderizado 2D interactivo en tiempo real
+- **Formato JSON**: Comunicación estandarizada entre todos los componentes
 
 ## 📁 Estructura del Proyecto
 
@@ -15,13 +16,21 @@ Motor de simulación en C++ para cálculos de propagación de fuego en 2D, con A
 motor-simulacion-propagacion-2D/
 ├── src/                      # Código fuente del motor C++
 │   ├── fire_engine.hpp       # Clase principal del motor
-│   ├── fire_engine.cpp       # Implementación del motor
+│   ├── fire_engine.cpp       # Implementación del motor (CFD)
 │   └── main.cpp              # Punto de entrada del ejecutable
 ├── api/                      # API Python
 │   └── fire_simulation_api.py
-├── scripts/                  # Scripts de utilidades
+├── scripts/                  # Scripts de utilidades Python
 │   ├── visualize.py          # Visualizador de terminal
 │   └── demo.py               # Script de demostración
+├── godot/                    # Integración con Godot 4.x
+│   ├── FireSimulationBridge.gd      # Puente de comunicación
+│   ├── FireGridRenderer.gd          # Renderizador 2D
+│   ├── FireSimulationController.gd  # Controlador principal
+│   ├── FireSimulationUI.gd          # Interfaz de usuario
+│   ├── SimpleExample.gd             # Ejemplo simple de testing
+│   ├── README.md                    # Guía de integración Godot
+│   └── PROJECT_SETUP.md             # Configuración de proyecto
 ├── CMakeLists.txt            # Configuración de CMake
 └── README.md                 # Este archivo
 ```
@@ -145,30 +154,60 @@ python scripts/demo.py --help
 ```json
 {
   "step": 0,
-  "width": 2,
-  "height": 2,
+  "width": 50,
+  "height": 50,
   "grid": [
-    [0, 0],
-    [0, 0]
+    [0, 0, 1, 0, 0],  // Estados discretos: 0=bosque, 1=fuego, 2=brasas, 3=ceniza
+    [0, 0, 0, 0, 0],
+    ...
   ],
-  "cells_ignited": 0
+  "fuel": [[1.0, 1.0, 0.5, ...], ...],          // Campo de combustible (0.0-1.0)
+  "temperature": [[0.0, 5.0, 2.3, ...], ...],   // Campo de temperatura
+  "u": [[0.0, 0.1, -0.2, ...], ...],            // Velocidad horizontal (fluido)
+  "v": [[0.0, 0.3, 0.1, ...], ...],             // Velocidad vertical (fluido)
+  "density": [[0.0, 1.0, 0.8, ...], ...]        // Densidad visual (humo/fuego)
 }
 ```
 
 **Campos:**
 - `step`: Número del paso actual
-- `width`: Ancho de la cuadrícula
-- `height`: Alto de la cuadrícula
-- `grid`: Matriz 2D (0 = sin fuego, 1 = en fuego)
-- `cells_ignited`: Número de celdas incendiadas en este paso (opcional)
+- `width`, `height`: Dimensiones de la cuadrícula
+- `grid`: Matriz 2D de estados discretos para visualización
+- `fuel`, `temperature`, `u`, `v`, `density`: Campos continuos de simulación CFD
 
 ## 🎮 Integración con Godot
 
-El motor está diseñado para integrarse con Godot. El flujo sería:
+El motor está diseñado para integrarse con Godot 4.x mediante scripts GDScript. Consulta la documentación completa en [`godot/README.md`](./godot/README.md).
 
-1. **Godot** envía el estado actual en JSON a la API Python
-2. **API Python** comunica con el motor C++ para procesar el estado
-3. **Motor C++** devuelve el nuevo estado en JSON
+### Setup Rápido
+
+1. Copia los scripts de `godot/` a tu proyecto de Godot
+2. Configura la ruta del motor en `FireSimulationBridge.gd`:
+   ```gdscript
+   @export var engine_path: String = "../build/fire_engine"
+   ```
+
+3. Crea una escena con esta jerarquía:
+   ```
+   Node
+   ├── FireSimulationBridge (Node)
+   ├── FireGridRenderer (Node2D)
+   └── FireSimulationController (Node)
+   ```
+
+4. Ejecuta y controla con teclado:
+   - **Espacio**: Pausar/Reanudar
+   - **R**: Resetear simulación
+   - **S**: Ejecutar paso único
+   - **+/-**: Ajustar velocidad
+   - **ESC**: Detener
+
+### Flujo de Comunicación
+
+1. **Godot** (GDScript) → Llama al motor C++ con `OS.execute()`
+2. **Motor C++** → Procesa física CFD y devuelve JSON por `stdout`
+3. **Godot** → Parsea JSON y actualiza grid visual
+4. **Repeat** → Loop de simulación en tiempo real
 4. **API Python** devuelve el resultado a Godot
 5. **Godot** renderiza la visualización 2D
 
