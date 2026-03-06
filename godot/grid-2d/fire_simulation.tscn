@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bboc7xmnna2wv"]
+
+[ext_resource type="Script" uid="uid://dmvtqupy1qdhq" path="res://FireSimulationBridge.gd" id="1_05wmh"]
+[ext_resource type="Script" uid="uid://cc02rpgdhl3ug" path="res://FireGridRenderer.gd" id="2_gj3na"]
+[ext_resource type="Script" uid="uid://bsrvxai04th80" path="res://FireSimulationController.gd" id="3_uioe3"]
+[ext_resource type="Script" uid="uid://pjpwhhuvivy6" path="res://FireSimulationUI.gd" id="4_re7uy"]
+
+[node name="FireSimulation" type="Node2D" unique_id=1203583287]
+
+[node name="FireSimulationBridge" type="Node" parent="." unique_id=1215116309]
+script = ExtResource("1_05wmh")
+
+[node name="FireGridRenderer" type="Node2D" parent="." unique_id=1082660340 node_paths=PackedStringArray("simulation_bridge")]
+script = ExtResource("2_gj3na")
+simulation_bridge = NodePath("../FireSimulationBridge")
+
+[node name="FireSimulationController" type="Node" parent="." unique_id=785273338 node_paths=PackedStringArray("bridge", "renderer")]
+script = ExtResource("3_uioe3")
+bridge = NodePath("../FireSimulationBridge")
+renderer = NodePath("../FireGridRenderer")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=531246832]
+
+[node name="FireSimulationUI" type="Control" parent="CanvasLayer" unique_id=1628354910 node_paths=PackedStringArray("controller", "renderer")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("4_re7uy")
+controller = NodePath("../../FireSimulationController")
+renderer = NodePath("../../FireGridRenderer")
