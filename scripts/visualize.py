@@ -42,6 +42,9 @@ class TerminalVisualizer:
         Args:
             state: Estado de la simulación en formato JSON
         """
+        # Limpiar pantalla antes de renderizar
+        self._clear_screen()
+        
         step = state.get('step', 0)
         width = state.get('width', 0)
         height = state.get('height', 0)
@@ -61,13 +64,21 @@ class TerminalVisualizer:
         self._render_grid(grid)
         
         # Estadísticas
-        self.total_cells = width * height
-        self.fire_cells = sum(row.count(1) for row in grid)
-        self.green_cells = self.total_cells - self.fire_cells
+        state_0 = sum(row.count(0) for row in grid)  # Bosque intacto
+        state_1 = sum(row.count(1) for row in grid)  # Fuego activo
+        state_2 = sum(row.count(2) for row in grid)  # Brasas/humo
+        state_3 = sum(row.count(3) for row in grid)  # Ceniza/quemado
         
-        print(f"\n  {self._color('■', self.GREEN)} Verdes (sin fuego): {self.green_cells}")
-        print(f"  {self._color('■', self.RED)} Rojas (en fuego): {self.fire_cells}")
+        print(f"\n  {self._color('■', self.GREEN)} Bosque intacto: {state_0}")
+        print(f"  {self._color('■', self.RED)} Fuego activo: {state_1}")
+        print(f"  {self._color('■', self.YELLOW)} Brasas/humo: {state_2}")
+        print(f"  {self._color('■', '\\033[90m')} Ceniza/quemado: {state_3}")
         print(f"{self._color('=' * 50, self.BLUE)}\n")
+    
+    def _clear_screen(self) -> None:
+        """Limpia la pantalla de la terminal."""
+        # Usar secuencia ANSI para limpiar y mover cursor al inicio
+        print('\033[2J\033[H', end='')
     
     def _render_grid(self, grid: list) -> None:
         """
@@ -91,11 +102,17 @@ class TerminalVisualizer:
             line = "  │ "
             for cell in row:
                 if cell == 0:
-                    # Verde (sin fuego)
-                    symbol = self._color('X', self.GREEN)
-                else:
-                    # Rojo (en fuego)
-                    symbol = self._color('O', self.RED)
+                    # Bosque intacto (verde)
+                    symbol = self._color('🟢', self.GREEN)
+                elif cell == 1:
+                    # Fuego activo (rojo brillante)
+                    symbol = self._color('🔴', self.RED)
+                elif cell == 2:
+                    # Brasas/humo (amarillo)
+                    symbol = self._color('🟡', self.YELLOW)
+                else:  # cell == 3
+                    # Ceniza/quemado (gris oscuro)
+                    symbol = self._color('🟠', '\033[90m')  # Gris oscuro
                 line += symbol + " │ "
             print(line)
         

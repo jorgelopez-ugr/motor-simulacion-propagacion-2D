@@ -46,3 +46,6 @@ estado*.json
 # Archivos temporales
 *.tmp
 *.log
+
+# My personal notes 
+notes.txt

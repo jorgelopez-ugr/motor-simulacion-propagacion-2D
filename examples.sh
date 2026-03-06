@@ -23,7 +23,7 @@ echo ""
 # Simulación de gran escala (50x50)
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Simulación de propagación de fuego (50x50)"
-echo "Lógica probabilística activada."
+echo "Modelo de fluidos basado en ecuaciones de NVIDIA"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Ejecutar script de demostración con parámetros grandes
